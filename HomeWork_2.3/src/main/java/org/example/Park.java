@@ -6,7 +6,6 @@ package org.example;
 
 public class Park {
     private Attraction attraction;
-
     public class Attraction{
         private String time;
         private double price;

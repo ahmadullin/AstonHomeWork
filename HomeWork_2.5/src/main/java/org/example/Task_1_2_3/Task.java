@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Task_1_2_3;
 
 public class Task {
     public static int arrayString(String[][] arrays) throws MyArraySizeException, MyArrayDataException {

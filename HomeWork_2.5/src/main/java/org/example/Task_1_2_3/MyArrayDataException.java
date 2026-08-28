@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Task_1_2_3;
 
 public class MyArrayDataException extends Exception {
     private int row;

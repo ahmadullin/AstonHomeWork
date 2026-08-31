@@ -25,7 +25,7 @@ class PhoneDirectory {
 
     public void get(String lastName) {
         List<String> phones = directory.get(lastName);
-        if (phones != null) {
+        if (phones != null && !phones.isEmpty()) {
             System.out.print(lastName + ": ");
             for (int i = 0; i < phones.size(); i++) {
                 System.out.print(phones.get(i));
@@ -34,6 +34,8 @@ class PhoneDirectory {
                 }
             }
             System.out.println();
+        } else {
+            System.out.println(lastName + ": нет номера");
         }
     }
 }

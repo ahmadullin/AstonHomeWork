@@ -7,6 +7,10 @@
     <groupId>org.example</groupId>
     <artifactId>AstonHomeWork_2.0</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>HomeWork_2.8</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

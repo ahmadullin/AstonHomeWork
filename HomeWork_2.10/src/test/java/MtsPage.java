@@ -3,7 +3,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.util.List;
 
 public class MtsPage {
@@ -16,48 +15,49 @@ public class MtsPage {
         this.wait = wait;
     }
 
-    // ===== ЛОКАТОРЫ (взяты из DevTools www.mts.by) =====
+    //ЛОКАТОРЫ
 
-    // Заголовок «Онлайн пополнение без комиссии»
     private final By blockTitle = By.xpath(
             "//h2[contains(text(),'Онлайн пополнение')]");
 
-    // Логотипы платёжных систем
     private final By paymentLogos = By.xpath(
             "//img[contains(@src,'visa') or contains(@src,'mastercard') or " +
                     "contains(@src,'belkart') or contains(@alt,'Visa') or " +
-                    "contains(@alt,'MasterCard') or contains(@alt,'Белкарт') or " +
-                    "contains(@alt,'БЕЛКАРТ')]");
+                    "contains(@alt,'MasterCard') or contains(@alt,'Белкарт')]");
 
-    // Ссылка «Подробнее о сервисе»
     private final By moreInfoLink = By.xpath(
             "//a[contains(text(),'Подробнее о сервисе')]");
 
-    // Вкладка «Услуги связи» — это выпадающий список (select)
-    // На скриншоте видно поле с текстом «Услуги связи» — это селект
-    private final By servicesTab = By.xpath(
-            "//div[contains(@class,'select')] | " +
-                    "//*[contains(text(),'Услуги связи')]");
+    // ВКЛАДКИ — ищем <a> с вложенным <h3>, содержащим текст
+    private final By tabServices = By.xpath(
+            "//a[h3[contains(normalize-space(text()),'Услуги связи')]]");
+    private final By tabInternet = By.xpath(
+            "//a[h3[contains(normalize-space(text()),'Домашний интернет')]]");
+    private final By tabInstallment = By.xpath(
+            "//a[h3[contains(normalize-space(text()),'Рассрочка')]]");
+    private final By tabArrears = By.xpath(
+            "//a[h3[contains(normalize-space(text()),'Задолженность')]]");
 
-    // Поле «Номер телефона» — ТОЧНЫЙ ID из скриншота
     private final By phoneInput = By.id("connection-phone");
-
-    // Поле «Сумма» — рядом с phone, ищем по placeholder
-    // На скриншоте placeholder «Сумма» — с большой буквы
     private final By sumInput = By.xpath(
             "//input[contains(@placeholder,'умма')] | " +
-                    "//input[contains(@id,'sum')] | " +
-                    "//input[contains(@name,'sum')]");
-
-    // Кнопка «Продолжить» — внутри формы pay-connection
+                    "//input[contains(@id,'sum')]");
     private final By continueButton = By.xpath(
-            "//form[@id='pay-connection']//button[contains(text(),'Продолжить')] | " +
-                    "//button[contains(text(),'Продолжить')]");
+            "//form[@id='pay-connection']//button[contains(text(),'Продолжить')]");
 
-    // Куки-баннер
     private final By cookieBanner = By.xpath(
-            "//button[contains(text(),'Принять') or contains(text(),'Согласен') or contains(text(),'Соглашаюсь')]");
-    // ===== ДЕЙСТВИЯ =====
+            "//button[contains(text(),'Принять') or contains(text(),'Согласен')]");
+
+    // Элементы в окне bePaid (iframe)
+    private final By paymentIframe = By.tagName("iframe");
+    private final By windowTotalAmount = By.xpath(
+            "//*[contains(text(),'10') and (contains(text(),'BYN') or contains(text(),'руб'))]");
+    private final By windowPhone = By.xpath(
+            "//*[contains(text(),'297777777')]");
+    private final By windowCardPlaceholder = By.xpath(
+            "//input[contains(@placeholder,'Номер карты') or contains(@placeholder,'номер карты')]");
+
+    // МЕТОДЫ
 
     public void closeCookieBannerIfPresent() {
         try {
@@ -81,8 +81,22 @@ public class MtsPage {
         return wait.until(ExpectedConditions.elementToBeClickable(moreInfoLink));
     }
 
-    public void clickServicesTab() {
-        wait.until(ExpectedConditions.elementToBeClickable(servicesTab)).click();
+    public void clickTab(String tabName) {
+        By locator;
+        switch (tabName) {
+            case "Услуги связи":     locator = tabServices; break;
+            case "Домашний интернет": locator = tabInternet; break;
+            case "Рассрочка":        locator = tabInstallment; break;
+            case "Задолженность":    locator = tabArrears; break;
+            default: throw new IllegalArgumentException("Неизвестная вкладка: " + tabName);
+        }
+        try {
+            WebElement tab = wait.until(ExpectedConditions.elementToBeClickable(locator));
+            tab.click();
+            System.out.println("Открыта вкладка: " + tabName);
+        } catch (Exception e) {
+            System.out.println("Не удалось открыть вкладку '" + tabName + "': " + e.getMessage());
+        }
     }
 
     public WebElement getPhoneInput() {
@@ -93,7 +107,22 @@ public class MtsPage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(sumInput));
     }
 
-    public WebElement getContinueButton() {
-        return wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+    public void clickContinue() {
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+        button.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(paymentIframe));
+        System.out.println("Нажата кнопка 'Продолжить', загружено окно bePaid");
+    }
+
+    public WebElement getWindowTotalAmount() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(windowTotalAmount));
+    }
+
+    public WebElement getWindowPhone() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(windowPhone));
+    }
+
+    public WebElement getWindowCardPlaceholder() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(windowCardPlaceholder));
     }
 }

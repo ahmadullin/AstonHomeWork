@@ -47,7 +47,7 @@ public class MtsTest {
     private static final By COOKIE_BANNER = By.xpath(
             "//button[contains(text(),'Принять') or contains(text(),'Согласен')]");
 
-    // ===== SETUP / TEARDOWN =====
+    //SETUP / TEARDOWN
 
     @BeforeAll
     public static void setUpDriver() {
@@ -80,7 +80,7 @@ public class MtsTest {
         }
     }
 
-    // ===== ТЕСТЫ =====
+    //ТЕСТЫ
 
     @Test
     @Order(1)
@@ -93,7 +93,7 @@ public class MtsTest {
         assertTrue(title.getText().toLowerCase().contains("онлайн пополнение"),
                 "Текст заголовка не содержит 'Онлайн пополнение'. Фактический текст: " + title.getText());
 
-        System.out.println("✓ Заголовок блока: " + title.getText());
+        System.out.println("Заголовок блока: " + title.getText());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class MtsTest {
         for (WebElement logo : logos) {
             assertTrue(logo.isDisplayed(),
                     "Логотип не отображается: " + logo.getAttribute("alt"));
-            System.out.println("✓ Найден логотип: " +
+            System.out.println("Найден логотип: " +
                     (logo.getAttribute("alt") != null
                             ? logo.getAttribute("alt")
                             : logo.getAttribute("src")));
@@ -129,14 +129,14 @@ public class MtsTest {
         String href = link.getAttribute("href");
         assertNotNull(href, "У ссылки отсутствует href");
         assertTrue(href.contains("mts.by"), "Ссылка ведёт не на сайт МТС");
-        System.out.println("✓ Ссылка ведёт на: " + href);
+        System.out.println("Ссылка ведёт на: " + href);
 
         link.click();
         try {
             wait.until(ExpectedConditions.urlContains("poryadok-oplaty"));
-            System.out.println("✓ Открыт URL: " + driver.getCurrentUrl());
+            System.out.println("Открыт URL: " + driver.getCurrentUrl());
         } catch (Exception e) {
-            System.out.println("ℹ URL остался прежним: " + e.getMessage());
+            System.out.println("URL остался прежним: " + e.getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ public class MtsTest {
         phoneInput.click();
         phoneInput.clear();
         phoneInput.sendKeys(TEST_PHONE_NUMBER);
-        System.out.println("✓ Введён номер: " + TEST_PHONE_NUMBER);
+        System.out.println("Введён номер: " + TEST_PHONE_NUMBER);
 
         // 2. Заполняем сумму
         WebElement sumInput = wait.until(
@@ -158,22 +158,22 @@ public class MtsTest {
         sumInput.click();
         sumInput.clear();
         sumInput.sendKeys("10");
-        System.out.println("✓ Введена сумма: 10");
+        System.out.println("Введена сумма: 10");
 
         // 3. Нажимаем "Продолжить"
         WebElement continueButton = wait.until(
                 ExpectedConditions.elementToBeClickable(CONTINUE_BUTTON));
         assertTrue(continueButton.isEnabled(), "Кнопка 'Продолжить' неактивна");
         continueButton.click();
-        System.out.println("✓ Нажата кнопка 'Продолжить'");
+        System.out.println("Нажата кнопка 'Продолжить'");
 
         // 4. Проверяем результат
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("iframe")));
-            System.out.println("✓ Платёжная форма (iframe bePaid) загружена");
+            System.out.println("Платёжная форма (iframe bePaid) загружена");
         } catch (Exception e) {
             String currentUrl = driver.getCurrentUrl();
-            System.out.println("✓ Текущий URL после клика: " + currentUrl);
+            System.out.println("Текущий URL после клика: " + currentUrl);
             assertNotEquals(BASE_URL, currentUrl,
                     "URL не изменился после нажатия 'Продолжить'");
         }
